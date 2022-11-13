@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -87,6 +86,8 @@ public class RadialMenu : MonoBehaviour
 
     public void Execute ()
     {
+        if (options.Count == 0) return;
+
         options[SelectionIndex].Execute();
 
         Hide();

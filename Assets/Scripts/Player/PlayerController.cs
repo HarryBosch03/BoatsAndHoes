@@ -8,19 +8,23 @@ public sealed class PlayerController : MonoBehaviour, IController
 {
     [SerializeField] GameObject avatarPrefab;
 
-    PlayerInput input;
+    ControlMap controlMap;
 
     public GameObject Avatar { get; private set; }
     public static HashSet<object> InputBlockers { get; } = new HashSet<object>();
 
-    public Vector2 MoveDirection { get; private set; }
-    public bool Jump { get; private set; } 
-    public bool Shoot { get; private set; } 
+    public Vector2 MoveDirection => GetBlockedInput<Vector2>(m => m.Move);
+    public bool Jump => GetBlockedInputFlag(m => m.Jump);
+    public bool Shoot => GetBlockedInputFlag(m => m.Shoot);
 
-    public bool Aim { get; private set; }
-    public bool Reload { get; private set; }
+    public bool Aim => GetBlockedInputFlag(m => m.Aim);
+    public bool Reload => GetBlockedInputFlag(m => m.Reload);
 
-    public bool Interact { get; private set; }
+    public bool Interact => GetBlockedInputFlag(m => m.Interact);
+
+    public bool InputBlocked => InputBlockers.Count > 0;
+
+    public event System.Action ToggleInventoryEvent;
 
     public void Spawn(Vector3 point, bool force = false)
     {
@@ -36,30 +40,44 @@ public sealed class PlayerController : MonoBehaviour, IController
         Avatar = Instantiate(avatarPrefab, point, Quaternion.identity, transform);
     }
 
-    public void OnMove(InputValue value) => MoveDirection = value.Get<Vector2>();
-    public void OnJump(InputValue value) => Jump = value.Get<float>() > 0.5f;
-    public void OnShoot(InputValue value) => Shoot= value.Get<float>() > 0.5f;
-    public void OnReload(InputValue value) => Reload= value.Get<float>() > 0.5f;
-    public void OnAim(InputValue value) => Aim= value.Get<float>() > 0.5f;
-    public void OnInteract(InputValue value) => Interact = value.Get<float>() > 0.5f;
+    public T GetBlockedInput<T> (System.Func<ControlMap.PlayerActions, InputAction> action) where T : struct
+    {
+        if (InputBlocked) return default;
+        return action(controlMap.Player).ReadValue<T>();
+    }
+
+    public bool GetBlockedInputFlag(System.Func<ControlMap.PlayerActions, InputAction> action)
+    {
+        if (InputBlocked) return false;
+        return action(controlMap.Player).ReadValue<float>() > 0.5f;
+    }
 
     private void Awake()
     {
-        input = GetComponent<PlayerInput>();
+        controlMap = new ControlMap();
+    }
+
+    private void OnEnable()
+    {
+        controlMap.Enable();
+
+        controlMap.Player.ToggleInventory.performed += (_) => ToggleInventoryEvent?.Invoke();
+    }
+
+    private void OnDisable()
+    {
+        controlMap.Player.ToggleInventory.performed -= (_) => ToggleInventoryEvent?.Invoke();
+
+        controlMap.Disable();
     }
 
     private void Update()
     {
-        if (input)
-        {
-            input.enabled = InputBlockers.Count == 0;
-        }
-
         if (Avatar)
         {
             if (Avatar.TryGetComponent(out FPCameraController cameraController))
             {
-                cameraController.enabled = InputBlockers.Count == 0;
+                cameraController.enabled = !InputBlocked;
             }
         }
 

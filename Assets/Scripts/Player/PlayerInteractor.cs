@@ -24,7 +24,7 @@ public class PlayerInteractor : MonoBehaviour
     bool lastInteractInput;
 
     public static GameObject Highlighted { get; private set; }
-    public GameObject Selected { get; private set; }
+    public static GameObject Selected { get; private set; }
 
     private void Awake()
     {
@@ -47,9 +47,12 @@ public class PlayerInteractor : MonoBehaviour
 
         if (controller != null)
         {
-            if (heldObject && controller.Interact && !lastInteractInput)
+            if (heldObject)
             {
-                Drop();
+                if (controller.Interact && !lastInteractInput)
+                {
+                    Drop();
+                }
             }
             else if (Selected)
             {
@@ -137,10 +140,12 @@ public class PlayerInteractor : MonoBehaviour
     private void Pickup(Rigidbody rigidbody)
     {
         heldObject = rigidbody;
+        Selected = null;
     }
 
     private void Drop()
     {
         heldObject = null;
+        Selected = null;
     }
 }

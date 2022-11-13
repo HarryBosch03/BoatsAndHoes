@@ -41,7 +41,10 @@ public class OutlinePostProcessPass : ScriptableRenderPass
         cmd.GetTemporaryRT(temporaryRTIdB, descriptor, FilterMode.Bilinear);
         destinationB = new RenderTargetIdentifier(temporaryRTIdB);
 
-        cmd.GetTemporaryRT(temporaryRTIdOutlineMask, renderingData.cameraData.cameraTargetDescriptor);
+        var outlineDescriptor = renderingData.cameraData.cameraTargetDescriptor;
+        outlineDescriptor.width /= 2;
+        outlineDescriptor.height /= 2;
+        cmd.GetTemporaryRT(temporaryRTIdOutlineMask, outlineDescriptor);
         outlineDest = new RenderTargetIdentifier(temporaryRTIdOutlineMask);
     }
 
@@ -75,14 +78,19 @@ public class OutlinePostProcessPass : ScriptableRenderPass
 
         cmd.SetRenderTarget(outlineDest);
         cmd.ClearRenderTarget(true, true, Color.clear);
-        if (PlayerInteractor.Highlighted)
+        if (!outlineMat)
         {
-            if (!outlineMat)
-            {
-                outlineMat = new Material(Shader.Find("Shader Graphs/New Shader Graph"));
-            }
+            outlineMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+        }
 
-            cmd.DrawRenderer(PlayerInteractor.Highlighted.GetComponentInChildren<Renderer>(), outlineMat);
+        System.Action<Renderer> draw = (r) => cmd.DrawRenderer(r, outlineMat, 0, 0);
+        if (PlayerInteractor.Selected)
+        {
+            draw(PlayerInteractor.Selected.GetComponentInChildren<Renderer>());
+        }
+        else if (PlayerInteractor.Highlighted)
+        {
+            draw(PlayerInteractor.Highlighted.GetComponentInChildren<Renderer>());
         }
 
         //---Custom effect here---

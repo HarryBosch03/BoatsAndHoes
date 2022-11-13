@@ -25,6 +25,8 @@ Shader "Hidden/Custom/Outline"
 			SAMPLER(sampler_MainTex);
 			SAMPLER(sampler_OutlineMask);
 
+			float4 _MainTex_TexelSize;
+
 			float _OverlayScale;
 			float4 _OverlayTint;
 
@@ -53,11 +55,35 @@ Shader "Hidden/Custom/Outline"
 				return output;
 			}
 
+			float ApplyStripes (float input, float2 uv)
+			{
+				float ss = uv.x + uv.y;
+				ss *= 10;
+				ss += _Time[1];
+				ss %= 1;
+
+				return (ss > 0.5) * input;
+			}
+
 			float4 frag(Varyings input) : SV_Target
 			{
 				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
-				float4 mask = SAMPLE_TEXTURE2D(_OutlineMask, sampler_OutlineMask, input.uv);
+				float mask = 0.0;
+				int expand = 5;
+				for (int i = -expand; i <= expand; i++)
+				{
+					for (int j = -expand; j <= expand; j++)
+					{
+						float2 uv = input.uv + (float2(i, j) * _MainTex_TexelSize.xy);
+						mask += SAMPLE_TEXTURE2D(_OutlineMask, sampler_OutlineMask, uv).r;
+					}
+				}
+				mask = min(mask, 1);
+				mask -= SAMPLE_TEXTURE2D(_OutlineMask, sampler_OutlineMask, input.uv).r;
+
+				mask = ApplyStripes(mask, input.uv);
+
 				float4 color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv);
 				return lerp(color, mask, mask.r);
 			}

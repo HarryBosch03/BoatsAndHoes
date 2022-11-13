@@ -15,4 +15,6 @@ public interface IController
     bool Reload { get; }
 
     bool Interact { get; }
+
+    event System.Action ToggleInventoryEvent;
 }
