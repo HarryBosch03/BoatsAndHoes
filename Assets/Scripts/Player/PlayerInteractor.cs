@@ -97,16 +97,18 @@ public class PlayerInteractor : MonoBehaviour
 
     private void Select(GameObject selection)
     {
+        if (radialMenuConfig.Count == 0) return;
+
         Selected = selection;
 
-        if (radialMenuConfig.Count == 1)
+        if (radialMenuConfig.Count > 1)
+        {
+            radialMenu.Show(radialMenuConfig.ToArray());
+        }
+        else
         {
             radialMenuConfig[0].callback?.Invoke();
             radialMenuConfig.Clear();
-        }
-        else if (radialMenuConfig.Count > 1)
-        {
-            radialMenu.Show(radialMenuConfig.ToArray());
         }
     }
 
@@ -127,6 +129,9 @@ public class PlayerInteractor : MonoBehaviour
         }
         else
         {
+            Rigidbody self = GetComponentInParent<Rigidbody>();
+            self.velocity -= force / self.mass;
+
             heldObject.velocity += force / heldObject.mass;
         }
     }

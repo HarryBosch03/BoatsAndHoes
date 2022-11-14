@@ -26,20 +26,36 @@ public sealed class InventoryChild : MonoBehaviour
     public bool TryInsert(ItemStack item, Vector2Int pos) => TryInsert(item, pos.x, pos.y);
     public bool TryInsert (ItemStack item, int x, int y)
     {
-        if (x + item.type.size.x >= Contents.GetLength(0)) return false;
-        if (y + item.type.size.y >= Contents.GetLength(1)) return false;
+        if (x + item.Size.x > Contents.GetLength(0)) return false;
+        if (y + item.Size.y > Contents.GetLength(1)) return false;
 
-        for (int i = 0; i < item.type.size.x; i++)
+        for (int i = 0; i < item.Size.x; i++)
         {
-            for (int j = 0; j < item.type.size.y; j++)
+            for (int j = 0; j < item.Size.y; j++)
             {
-                if (Contents[x + i, y + j] != null) return false;
+                ItemStack slot = Contents[x + i, y + j];
+                if (slot && slot != item) return false;
             }
         }
 
-        for (int i = 0; i < item.type.size.x; i++)
+        if (item.inventory)
         {
-            for (int j = 0; j < item.type.size.y; j++)
+            for (int i = 0; i < item.Size.x; i++)
+            {
+                for (int j = 0; j < item.Size.y; j++)
+                {
+                    item.inventory.Contents[i + item.locX, j + item.locY] = null;
+                }
+            }
+        }
+
+        item.inventory = this;
+        item.locX = x;
+        item.locY = y;
+
+        for (int i = 0; i < item.Size.x; i++)
+        {
+            for (int j = 0; j < item.Size.y; j++)
             {
                 Contents[x + i, y + j] = item;
             }

@@ -160,20 +160,29 @@ public sealed class ItemBakeUtility : EditorWindow
 
         byte[] rawData = assetOutput.EncodeToPNG();
 
-        var path = Application.dataPath + "/Textures/Items/Icons/";
+        var partialPath = "/Textures/Items/Icons/";
+        var fullPath = Application.dataPath + partialPath;
         var fileName = type.name + " Icon.png";
 
-        if (!Directory.Exists(path))
+        if (!Directory.Exists(fullPath))
         {
-            Directory.CreateDirectory(path);
+            Directory.CreateDirectory(fullPath);
         }
 
-        File.WriteAllBytes(path + fileName, rawData);
-        Debug.Log($"Texture successfully baked to {path}{fileName}");
+        File.WriteAllBytes(fullPath + fileName, rawData);
+        Debug.Log($"Texture successfully baked to {fullPath}{fileName}");
+
         AssetDatabase.Refresh();
 
-        var asset = AssetDatabase.LoadAssetAtPath("Assets/Textures/Items/Icons/" + fileName, typeof(Texture));
-        Selection.activeObject = asset;
+        var importer = AssetImporter.GetAtPath("Assets" + partialPath + fileName) as TextureImporter;
+        importer.textureType = TextureImporterType.Sprite;
+        EditorUtility.SetDirty(importer);
+        importer.SaveAndReimport();
+
+        AssetDatabase.Refresh();
+
+        Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets" + partialPath + fileName);
+        type.icon = sprite;
     }
 }
 
