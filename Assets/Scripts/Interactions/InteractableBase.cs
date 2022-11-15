@@ -5,6 +5,7 @@ using UnityEngine;
 public class InteractableBase : MonoBehaviour
 {
     public virtual string InteractionDisplayName => "Test";
+    public virtual bool InteractionValid => true;
 
     public virtual void Interact (GameObject interactor)
     {

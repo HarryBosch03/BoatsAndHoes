@@ -24,8 +24,6 @@ public sealed class PlayerController : MonoBehaviour, IController
 
     public bool InputBlocked => InputBlockers.Count > 0;
 
-    public event System.Action ToggleInventoryEvent;
-
     public void Spawn(Vector3 point, bool force = false)
     {
         if (Avatar)
@@ -60,14 +58,10 @@ public sealed class PlayerController : MonoBehaviour, IController
     private void OnEnable()
     {
         controlMap.Enable();
-
-        controlMap.Player.ToggleInventory.performed += (_) => ToggleInventoryEvent?.Invoke();
     }
 
     private void OnDisable()
     {
-        controlMap.Player.ToggleInventory.performed -= (_) => ToggleInventoryEvent?.Invoke();
-
         controlMap.Disable();
     }
 

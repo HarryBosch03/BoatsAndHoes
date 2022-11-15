@@ -58,15 +58,6 @@
                     "processors": "",
                     "interactions": "Press(behavior=2)",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "Toggle Inventory",
-                    "type": "Button",
-                    "id": "00649c1f-18c7-4eff-807e-852ef24a4991",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -212,28 +203,6 @@
                     "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": true
-                },
-                {
-                    "name": "",
-                    "id": "fec12ae6-4f48-430f-8627-c015e36a3069",
-                    "path": "<Keyboard>/tab",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Toggle Inventory",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "29f8ec78-664c-4272-b477-0cc7628b72d3",
-                    "path": "<Keyboard>/i",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Toggle Inventory",
-                    "isComposite": false,
-                    "isPartOfComposite": false
                 }
             ]
         }

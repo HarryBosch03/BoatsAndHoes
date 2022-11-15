@@ -91,7 +91,10 @@ public class PlayerInteractor : MonoBehaviour
 
         foreach (var interaction in lookingAt.transform.GetComponentsInChildren<InteractableBase>())
         {
-            radialMenuConfig.Add(new RadialMenuConfig(interaction.InteractionDisplayName, () => interaction.Interact(gameObject)));
+            if (interaction.InteractionValid)
+            {
+                radialMenuConfig.Add(new RadialMenuConfig(interaction.InteractionDisplayName, () => interaction.Interact(gameObject)));
+            }
         }
     }
 

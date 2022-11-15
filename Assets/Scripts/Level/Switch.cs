@@ -9,10 +9,16 @@ public sealed class Switch : InteractableBase
     [SerializeField] Pose offPose;
     [SerializeField] Pose onPose;
     [SerializeField] Transform switchHandle;
+    [SerializeField] float speed;
 
-    bool state;
+    [SerializeField] bool state;
 
     public override string InteractionDisplayName => "Toggle Switch";
+
+    private void Start()
+    {
+        SetState(state);
+    }
 
     private void FixedUpdate()
     {
@@ -20,13 +26,21 @@ public sealed class Switch : InteractableBase
         {
             PowerInterface.DistributePower(GetComponentsInChildren<PowerInterface>());
         }
+
+        Vector3 tPos = state ? onPose.position : offPose.position;
+        Quaternion tRot = state ? onPose.rotation : offPose.rotation;
+
+        switchHandle.localPosition = Vector3.Lerp(switchHandle.localPosition, tPos, speed * Time.deltaTime);
+        switchHandle.localRotation = Quaternion.Slerp(switchHandle.localRotation, tRot, speed * Time.deltaTime);
     }
 
     public override void Interact(GameObject interactor)
     {
-        state = !state;
+        SetState(!state);
+    }
 
-        switchHandle.localPosition = state ? onPose.position : offPose.position;
-        switchHandle.localRotation = state ? onPose.rotation : offPose.rotation;
+    public void SetState (bool state)
+    {
+        this.state = state;
     }
 }

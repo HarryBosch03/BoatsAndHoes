@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [SelectionBase]
@@ -21,7 +22,7 @@ public sealed class PowerManager : MonoBehaviour
 
         foreach (var pair in channels)
         {
-            PowerInterface.DistributePower(pair.Value);
+            PowerInterface.DistributePower(pair.Value.ToArray());
         }
     }
 }

@@ -315,7 +315,7 @@ MonoBehaviour:
   smoothTime: 0.06
   handle: {fileID: 4513700148846176979}
   state: 0
-  chargeThreshold: 0
+  chargeThreshold: 0.5
 --- !u!114 &2914828378902641040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -329,6 +329,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   capacity: 100
-  flow: 1
+  flow: 40
   supply: -200
   channel: c2
