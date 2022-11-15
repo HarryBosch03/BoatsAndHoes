@@ -6,86 +6,60 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public sealed class PowerInterface : MonoBehaviour
 {
-    [SerializeField] float capacity;
-    [SerializeField] float flow;
     [SerializeField] float supply;
-    [SerializeField] string channel;
+    [SerializeField] string channelEditor;
 
-    [Space]
-    [SerializeField] Image indicator;
-    [SerializeField] Gradient gradient;
-    [SerializeField] bool useIndicatorFill;
-    [SerializeField] bool useIndicatorColor;
-
-    public float Fill { get; set; }
-    public float Flow => flow;
     public float Supply { get => supply; set => supply = value; }
-    public float DrainThisFrame { get; private set; }
-    public string Channel => channel.ToLower().Trim();
+    public float Energy { get; set; }
+    public string Channel { get; set; }
 
-    private void FixedUpdate()
+    public static Dictionary<string, HashSet<PowerInterface>> All { get; } = new Dictionary<string, HashSet<PowerInterface>>();
+
+
+    private void OnEnable()
     {
-        var delta = Mathf.Max(Mathf.Min(capacity - Fill, supply * Time.deltaTime), -Fill);
-        Fill += delta;
-        DrainThisFrame = delta;
+        var _ = PowerManager.Instance;
 
-        if (indicator)
-        {
-            if (useIndicatorColor)
-            {
-                indicator.color = gradient.Evaluate(Fill / capacity);
-            }
-            if (useIndicatorFill)
-            {
-                indicator.fillAmount = Fill / capacity;
-            }
-        }
+        Channel = channelEditor;
+        if (!All.ContainsKey(Channel)) All.Add(Channel, new HashSet<PowerInterface>());
+        All[Channel].Add(this);
     }
 
-    public bool TryFill(float fill, out float overflow) => TryDraw(-fill, out overflow);
-    public bool TryDraw(float draw, out float overflow)
+    private void OnDisable()
     {
-        Fill -= draw;
-
-        if (Fill > capacity)
-        {
-            overflow = Fill - capacity;
-            Fill = capacity;
-            return false;
-        }
-
-        if (Fill < 0.0f)
-        {
-            overflow = Fill;
-            Fill = 0.0f;
-            return false;
-        }
-
-        overflow = 0.0f;
-        return true;
+        All[Channel].Remove(this);
+        if (All[Channel].Count == 0) All.Remove(Channel);
     }
 
-    public static void DistributePower(IList<PowerInterface> connections)
+    private void Update()
     {
-        for (int i = 0; i < connections.Count; i++)
-        {
-            for (int j = i + 1; j < connections.Count; j++)
-            {
-                var connA = connections[i];
-                var connB = connections[j];
+        channelEditor = Channel;
+    }
+}
 
-                float diff = connA.Fill - connB.Fill;
-                float delta = diff * (connA.flow + connB.flow) * 0.5f * Time.deltaTime;
+public class PowerBridge
+{
+    public string channelA;
+    public string channelB;
+    public bool active;
+    public bool dead;
 
-                if (connA.Fill - delta < 0.0f) delta = connA.Fill;
-                if (connB.Fill + delta < 0.0f) delta = -connB.Fill;
+    public static HashSet<PowerBridge> All { get; } = new HashSet<PowerBridge>();
 
-                if (connA.Fill - delta > connA.capacity) delta = connA.Fill - connA.capacity;
-                if (connB.Fill + delta > connB.capacity) delta = connB.capacity - connB.Fill;
+    public PowerBridge ()
+    {
+        All.Add(this);
+    }
 
-                connA.Fill -= delta;
-                connB.Fill += delta;
-            }
-        }
+    public PowerBridge(string channelA, string channelB) : this()
+    {
+        this.channelA = channelA;
+        this.channelB = channelB;
+    }
+
+    public void Delete ()
+    {
+        dead = true;
+        All.Remove(this);
     }
 }

@@ -9,9 +9,16 @@ public sealed class Switch : InteractableBase
     [SerializeField] Pose offPose;
     [SerializeField] Pose onPose;
     [SerializeField] Transform switchHandle;
-    [SerializeField] float speed;
+    [SerializeField] float animationSpeed;
+    
+    [Space]    
+    [SerializeField] string channelA;
+    [SerializeField] string channelB;
 
+    [Space]
     [SerializeField] bool state;
+
+    PowerBridge bridge;
 
     public override string InteractionDisplayName => "Toggle Switch";
 
@@ -20,18 +27,29 @@ public sealed class Switch : InteractableBase
         SetState(state);
     }
 
+    private void OnEnable()
+    {
+        bridge = new PowerBridge(channelA, channelB);
+    }
+
+    private void OnDisable()
+    {
+        bridge.Delete();
+    }
+
+    private void Update()
+    {
+        channelA = bridge.channelA;
+        channelB = bridge.channelB;
+    }
+
     private void FixedUpdate()
     {
-        if (state)
-        {
-            PowerInterface.DistributePower(GetComponentsInChildren<PowerInterface>());
-        }
-
         Vector3 tPos = state ? onPose.position : offPose.position;
         Quaternion tRot = state ? onPose.rotation : offPose.rotation;
 
-        switchHandle.localPosition = Vector3.Lerp(switchHandle.localPosition, tPos, speed * Time.deltaTime);
-        switchHandle.localRotation = Quaternion.Slerp(switchHandle.localRotation, tRot, speed * Time.deltaTime);
+        switchHandle.localPosition = Vector3.Lerp(switchHandle.localPosition, tPos, animationSpeed * Time.deltaTime);
+        switchHandle.localRotation = Quaternion.Slerp(switchHandle.localRotation, tRot, animationSpeed * Time.deltaTime);
     }
 
     public override void Interact(GameObject interactor)
@@ -42,5 +60,6 @@ public sealed class Switch : InteractableBase
     public void SetState (bool state)
     {
         this.state = state;
+        bridge.active = state;
     }
 }

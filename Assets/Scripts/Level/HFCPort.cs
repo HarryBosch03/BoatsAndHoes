@@ -33,7 +33,7 @@ public sealed class HFCPort : InteractableBase
         cellContainer.SetActive(cell);
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         pInterface.Supply = 0.0f;
         statusIndicator.color = noCell;
@@ -48,7 +48,7 @@ public sealed class HFCPort : InteractableBase
                 statusIndicator.color = working;
             }
 
-            cell.Fill -= pInterface.DrainThisFrame;
+            cell.Fill -= pInterface.Energy * Time.deltaTime;
         }
 
         deadTime -= Time.deltaTime;

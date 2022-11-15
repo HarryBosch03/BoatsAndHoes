@@ -19,7 +19,8 @@ public sealed class PowerInterfaceEditor : Editor
 
             StringBuilder b = new StringBuilder();
             b.Append($"{pInterface.name} Listenting on {pInterface.Channel}\n");
-            b.Append($"Charge: {pInterface.Fill}");
+            b.Append($"Supply: {pInterface.Supply}\n");
+            b.Append($"Energy: {pInterface.Energy}\n");
 
             Handles.Label(pInterface.transform.position + Vector3.up * 0.5f, b.ToString());
         }
