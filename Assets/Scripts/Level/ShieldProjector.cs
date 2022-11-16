@@ -25,7 +25,7 @@ public sealed class ShieldProjector : MonoBehaviour
         width = Mathf.SmoothDamp(width, state ? size.x : 0.0f, ref velocity, smoothTime);
         handle.localScale = new Vector3(width, 1.0f, width > 0.1f ? size.y : 0.0f);
 
-        state = pInterface.Energy > 0.0f;
+        state = pInterface.Volume > 0.0f;
     }
 
     private void OnValidate()

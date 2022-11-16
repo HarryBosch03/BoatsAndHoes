@@ -4,6 +4,7 @@ using UnityEngine;
 
 [SelectionBase]
 [DisallowMultipleComponent]
+[RequireComponent(typeof(PowerConnection))]
 public sealed class Switch : InteractableBase
 {
     [SerializeField] Pose offPose;
@@ -18,29 +19,14 @@ public sealed class Switch : InteractableBase
     [Space]
     [SerializeField] bool state;
 
-    PowerBridge bridge;
-
+    PowerConnection connection;
+    
     public override string InteractionDisplayName => "Toggle Switch";
 
     private void Start()
     {
+        connection = GetComponent<PowerConnection>();
         SetState(state);
-    }
-
-    private void OnEnable()
-    {
-        bridge = new PowerBridge(channelA, channelB);
-    }
-
-    private void OnDisable()
-    {
-        bridge.Delete();
-    }
-
-    private void Update()
-    {
-        channelA = bridge.channelA;
-        channelB = bridge.channelB;
     }
 
     private void FixedUpdate()
@@ -60,6 +46,6 @@ public sealed class Switch : InteractableBase
     public void SetState (bool state)
     {
         this.state = state;
-        bridge.active = state;
+        connection.enabled = state;
     }
 }

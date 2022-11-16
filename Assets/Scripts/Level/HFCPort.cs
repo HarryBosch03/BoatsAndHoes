@@ -47,11 +47,17 @@ public sealed class HFCPort : InteractableBase
                 statusIndicator.fillAmount = cell.Fill / cell.Capacity;
                 statusIndicator.color = working;
             }
-
-            cell.Fill -= pInterface.Energy * Time.deltaTime;
         }
 
         deadTime -= Time.deltaTime;
+    }
+
+    private void FixedUpdate()
+    {
+        if (cell)
+        {
+            cell.Fill -= pInterface.FrameSupply;
+        }
     }
 
     public override void Interact(GameObject interactor)

@@ -6,60 +6,25 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public sealed class PowerInterface : MonoBehaviour
 {
+    [SerializeField] float push;
+    [SerializeField] float capacity;
+    [SerializeField] float volume;
     [SerializeField] float supply;
-    [SerializeField] string channelEditor;
 
+    public float Push => push;
+    public float Volume { get => volume; set => volume = value; }
+    public float Capacity => capacity;
     public float Supply { get => supply; set => supply = value; }
-    public float Energy { get; set; }
-    public string Channel { get; set; }
+    public float FrameSupply { get; private set; }
 
-    public static Dictionary<string, HashSet<PowerInterface>> All { get; } = new Dictionary<string, HashSet<PowerInterface>>();
-
-
-    private void OnEnable()
+    private void FixedUpdate()
     {
-        var _ = PowerManager.Instance;
+        float frameSupply = Supply * Time.deltaTime;
 
-        Channel = channelEditor;
-        if (!All.ContainsKey(Channel)) All.Add(Channel, new HashSet<PowerInterface>());
-        All[Channel].Add(this);
-    }
+        if (Volume + frameSupply > Capacity) frameSupply = Capacity - Volume;
+        if (Volume + frameSupply < 0.0f) frameSupply = -Volume;
 
-    private void OnDisable()
-    {
-        All[Channel].Remove(this);
-        if (All[Channel].Count == 0) All.Remove(Channel);
-    }
-
-    private void Update()
-    {
-        channelEditor = Channel;
-    }
-}
-
-public class PowerBridge
-{
-    public string channelA;
-    public string channelB;
-    public bool active;
-    public bool dead;
-
-    public static HashSet<PowerBridge> All { get; } = new HashSet<PowerBridge>();
-
-    public PowerBridge ()
-    {
-        All.Add(this);
-    }
-
-    public PowerBridge(string channelA, string channelB) : this()
-    {
-        this.channelA = channelA;
-        this.channelB = channelB;
-    }
-
-    public void Delete ()
-    {
-        dead = true;
-        All.Remove(this);
+        Volume += frameSupply;
+        FrameSupply = frameSupply;
     }
 }

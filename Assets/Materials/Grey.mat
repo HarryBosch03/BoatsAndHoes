@@ -119,7 +119,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Metallic: 0
+    - _Metallic: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueControl: 0
@@ -136,13 +136,13 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 0.1509434, g: 0.1509434, b: 0.1509434, a: 1}
-    - _Color: {r: 0.1509434, g: 0.1509434, b: 0.1509434, a: 1}
+    - _Color: {r: 0.6037736, g: 0.6037736, b: 0.6037736, a: 1}
     - _Color_A: {r: 0.26415092, g: 0.26415092, b: 0.26415092, a: 1}
     - _Color_B: {r: 0.26415092, g: 0.26415092, b: 0.26415092, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Emmision: {r: 1, g: 1, b: 1, a: 1}
     - _Roughness_Range: {r: 0.2, g: 0.4, b: 0, a: 0}
-    - _Smoothness_Range: {r: 0.1, g: 0.4, b: 0, a: 0}
+    - _Smoothness_Range: {r: 0.1, g: 0.2, b: 0, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
     - _Voroni_HSV_Influence: {r: 0, g: 1.3, b: 0.8, a: 0}
   m_BuildTextureStacks: []

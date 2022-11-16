@@ -226,6 +226,7 @@ GameObject:
   - component: {fileID: 5056312883488366416}
   - component: {fileID: 8682608288753530687}
   - component: {fileID: 2914828378902641040}
+  - component: {fileID: 2118375180461348504}
   m_Layer: 0
   m_Name: Shield Projector
   m_TagString: Untagged
@@ -328,7 +329,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cc8f57dca06abe41886cf7f91892c8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  capacity: 100
-  flow: 40
-  supply: -200
-  channel: c2
+  push: 20
+  capacity: 10
+  volume: 0
+  supply: -20
+--- !u!114 &2118375180461348504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6713562710541450885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40bdca5bbb2d93c42af32dec2b59a499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  a: {fileID: 2914828378902641040}
+  b: {fileID: 0}

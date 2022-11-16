@@ -128,7 +128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3556d1cf780c74f8a1cb3fcc77b24f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  expectedDrainRate: 200
+  expectedDrainRate: 20
   durationMinutes: 2
   fillPercent: 1
   peakBrightness: 20
